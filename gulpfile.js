@@ -7,7 +7,9 @@
         uglify = require("gulp-uglify"),
         minifyCSS = require("gulp-minify-css"),
         rename = require("gulp-rename"),
-        header = require('gulp-header');
+        header = require('gulp-header'),
+        sass = require('gulp-sass'),
+	    watch = require('gulp-watch');
 
     var pkg = require('./package.json');
     var banner = ['/**',
@@ -22,13 +24,13 @@
         del.sync('./dist', {force: true});
     });
 
-    gulp.task('dist:styles', ['dist:clean'], function () {
-        return gulp.src('./src/*.css')
-            .pipe(minifyCSS())
-            .pipe(rename('daterangepicker.min.css'))
-            .pipe(gulp.dest('./dist'))
-            .on('error', gutil.log)
-    });
+	gulp.task('dist:styles', function() {
+		gulp.src('./src/*.scss')
+			.pipe(sass().on('error', sass.logError))
+			.pipe(minifyCSS())
+			.pipe(rename('daterangepicker.min.css'))
+			.pipe(gulp.dest('./dist'));
+	});
 
     gulp.task('dist:script', ['dist:clean'], function () {
         return gulp.src('./src/*.js')
@@ -39,6 +41,11 @@
             .on('error', gutil.log)
     });
 
+	gulp.task('watch', function () {
+		watch('./src/*.scss', function() {
+			gulp.run(['dist:styles']);
+		});
+	});
 
     gulp.task('default', ['dist:clean', 'dist:styles', 'dist:script'], function (cb) {
         gutil.log('Info :', gutil.colors.green('Distribution files are ready!'));

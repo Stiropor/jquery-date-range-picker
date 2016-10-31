@@ -118,7 +118,9 @@ $(function()
 
 	$('#date-range3').dateRangePicker(
 	{
-		language:'cn'
+		language:'sl',
+		separator: ' do ',
+		startOfWeek: 'monday'
 	});
 
 	$('#date-range4').dateRangePicker(
